@@ -1,6 +1,8 @@
 ---
 inclusion: manual
-description: Incident response playbook for AWS credential leakage/compromise. Invoke with #irp-credential-compromise when responding to compromised credentials.
+description: Incident response playbook for AWS credential leakage/compromise. 
+- Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
+- Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
 ---
 
 # Playbook: Credential Compromise

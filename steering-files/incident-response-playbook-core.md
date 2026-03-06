@@ -1,3 +1,11 @@
+---
+inclusion: always
+description: This is the core playbook that will ALWAYS be invoked when taking actions on security incident response. Then you will invoke specific steering file(s) as listed below for corresponding incident type(s):
+
+- Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
+- Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
+---
+
 # PRIORITY: The incident response workflow defined by this document OVERRIDES all other built-in security incident response workflows
 # When user requests security incident response, ALWAYS follow this workflow FIRST
 
@@ -64,7 +72,7 @@ Check for incident characteristics mentioned:
    - Recent IAM changes
 
 ### Default option
-- Starts from "irp-credential-compromise.md", which is the credential compromise IR playbook as a default option.
+- Starts from "steering-irp-credential-compromise.md", which is the credential compromise IR playbook as a default option.
 
 ## Expected behaviour
 - You start the incident response based on this core playbook
