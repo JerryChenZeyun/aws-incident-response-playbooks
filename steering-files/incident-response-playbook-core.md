@@ -81,6 +81,23 @@ Check for incident characteristics mentioned:
 - Presents critical findings to user, and ask for approval WHENEVER you need to change any resources or their configurations
 - By end of the process, ALWAYS prosent a root cause analysis to user, actions taken, and if any further actions still needed.
 
+# Tool Selection Strategy
+
+When executing IR actions, use the most efficient tool available in your environment. Follow this priority order:
+
+1. **MCP tools (preferred):** If an MCP server is available (e.g., AWS API MCP Server with `call_aws`), use it for AWS API calls. MCP tools offer structured responses, better error handling, and batch execution (up to 20 parallel calls) which is critical for IR speed.
+2. **AWS CLI (fallback):** If MCP tools are not available, execute the equivalent `aws` CLI commands as specified in the IR steering files.
+
+The CLI commands in each IR steering file represent the logical operations to perform. Translate them to MCP calls when MCP is available rather than shelling out CLI commands.
+
+**When MCP batch execution is especially valuable during IR:**
+- Checking multiple resources simultaneously (e.g., public access settings across all S3 buckets)
+- Querying CloudTrail for multiple access keys or event types in parallel
+- Listing IAM users, roles, and access keys across the account
+- Describing multiple EC2 instances or security groups at once
+
+**Important:** Do NOT attempt to detect MCP availability — you already know what tools you have access to. Simply use the best available tool for each operation.
+
 # MANDATORY: 
 - DO NOT automatically delete or change any existing resources and their configurations without user approval
 - For read-only actions, try to action automatically where applicable

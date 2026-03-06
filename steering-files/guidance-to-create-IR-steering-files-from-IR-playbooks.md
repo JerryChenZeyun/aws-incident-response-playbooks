@@ -153,14 +153,27 @@ When translating from the human-centric playbook to the agent-centric steering f
 - Communication and stakeholder notification steps
 - Post-incident and lessons-learned processes
 
-### 3.5 CLI Command Standards
+### 3.5 CLI Command and Tool Selection Standards
 
-All CLI commands in the steering file MUST:
+All IR steering files use AWS CLI commands as the canonical representation of each operation. These serve as both the precise specification of what to do AND the fallback execution method.
+
+When authoring CLI commands in the steering file:
 - Use `aws` CLI syntax
 - Include placeholder parameters in angle brackets: `<parameter-name>`
-- Be wrapped in ```bash code blocks
+- Wrap in ```bash code blocks
 - Include a brief comment above the command explaining its purpose when not obvious
 - Group related commands under a single code block where logical
+
+**MCP-aware authoring:** Where a set of CLI commands would benefit from parallel execution, add a comment noting the batch opportunity. For example:
+
+```bash
+# MCP batch opportunity: the following checks can be run in parallel
+aws s3api get-public-access-block --bucket <bucket-1>
+aws s3api get-public-access-block --bucket <bucket-2>
+aws s3api get-public-access-block --bucket <bucket-3>
+```
+
+The agent will use MCP batch calls when available, or fall back to sequential CLI execution. Do NOT write MCP-specific syntax in the steering file — keep CLI as the universal format. The core playbook's Tool Selection Strategy handles runtime tool choice.
 
 ### 3.6 Quality Checklist Before Saving
 
