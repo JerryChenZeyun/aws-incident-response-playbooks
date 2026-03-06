@@ -1,6 +1,9 @@
 ---
 inclusion: manual
-description: Incident response playbook for unintended access to Amazon S3 buckets. Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
+description: Incident response playbook for unintended access to Amazon S3 buckets. 
+- Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
+- Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
+- Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
 ---
 
 # Playbook: Unintended S3 Data Access

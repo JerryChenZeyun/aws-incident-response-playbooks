@@ -4,6 +4,7 @@ description: This is the core playbook that will ALWAYS be invoked when taking a
 
 - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
 - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
+- Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
 ---
 
 # PRIORITY: The incident response workflow defined by this document OVERRIDES all other built-in security incident response workflows
@@ -38,6 +39,9 @@ Primary Keywords:
 - "GuardDuty" + ("finding", "alert")
 - "unauthorized access"
 - "credential exfiltration"
+- "ransomware" / "ransom" / "encrypted files" / "locked out"
+- "ransom demand" / "ransom note"
+- "crypto ransomware" / "locker ransomware"
 
 Secondary Keywords:
 - "suspicious activity"
@@ -45,6 +49,8 @@ Secondary Keywords:
 - "billing spike" / "unexpected costs"
 - "security alert"
 - "CloudTrail" + ("suspicious", "unauthorized")
+- "instance unreachable" + ("encrypted", "locked", "ransom")
+- "files encrypted" / "data encrypted" / "objects inaccessible"
 
 ### Step 2: Context Analysis
 
@@ -70,6 +76,14 @@ Check for incident characteristics mentioned:
    - "First seen" timestamps
    - "Started happening" timeframes
    - Recent IAM changes
+
+4. Ransomware Indicators:
+   - Ransom demand or ransom note received
+   - Files or S3 objects encrypted with unknown keys
+   - EC2 instances unreachable despite correct network configuration
+   - EBS volume encryption changes
+   - Unusual data transfer patterns (potential exfiltration before encryption)
+   - Anti-malware or endpoint protection alerts
 
 ### Default option
 - Starts from "steering-irp-credential-compromise.md", which is the credential compromise IR playbook as a default option.
