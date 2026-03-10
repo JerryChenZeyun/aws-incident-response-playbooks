@@ -74,3 +74,9 @@ The "Tool Selection Strategy" section in the core file is also a nice touch — 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
 
 Artificial intelligence can make mistakes. Ensure that operators carefully check and verify output.
+
+## License Summary
+
+The documentation is made available under the Creative Commons Attribution-ShareAlike 4.0 International License. See the LICENSE file.
+
+The sample code within this documentation is made available under the MIT-0 license. See the LICENSE-SAMPLECODE file.
