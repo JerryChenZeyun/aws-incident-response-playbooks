@@ -6,7 +6,7 @@ description: Guidance steering file for creating new incident response (IR) stee
 # Guidance: Translating IR Playbooks into Agent-Centric Steering Files
 
 ## Purpose
-This steering file guides you (the agent) through creating a new incident response steering file by translating a human-centric IR playbook from the `playbooks/` folder into an agent-actionable steering file stored in `.kiro/steering/incident-response-playbook-reference/`.
+This steering file guides you (the agent) through creating a new incident response [steering file](https://kiro.dev/docs/steering/) by translating a human-centric IR playbook from the `playbooks/` folder into an agent-actionable steering file stored in `.kiro/steering/incident-response-playbook-reference/`.
 
 ## Procedure Overview
 

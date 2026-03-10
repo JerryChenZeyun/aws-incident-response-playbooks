@@ -13,7 +13,7 @@ description: This is the core playbook that will ALWAYS be invoked when taking a
 # Core Philosophy & Principles
 
 ## Incident response life cycle
-When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2 where applicable:
+When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2:
 
 Step1: Detection - Identify potential security events
 Step2: Analysis - Determine if an event is an incident and assess scope
