@@ -8,6 +8,8 @@ description: Incident response playbook for AWS credential leakage/compromise.
 
 # Playbook: Credential Compromise
 
+
+
 ## Incident Type
 Credential Leakage/Compromise - When AWS credentials (IAM user access keys or STS temporary credentials) have been obtained by an unauthorized actor.
 

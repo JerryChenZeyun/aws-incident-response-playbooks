@@ -211,6 +211,7 @@ Edit `.kiro/steering/incident-response-playbook-core.md`:
 Edit each existing steering file in `.kiro/steering/incident-response-playbook-reference/` and add the new playbook's invoke line to their `description` front-matter, so all sibling playbooks cross-reference each other.
 
 For example, add to each sibling's front-matter description:
+
 ```
 - Invoke with "steering-irp-<short-name>.md" when responding to <incident scenario>.
 ```

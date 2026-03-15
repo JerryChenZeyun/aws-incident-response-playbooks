@@ -12,6 +12,9 @@ description: This is the core playbook that will ALWAYS be invoked when taking a
 
 # Core Philosophy & Principles
 
+## Human-directed instruction
+You are authorized to gather account data and present it back to the incident response operator running this workflow. However, before making any changes to AWS accounts, account resources, or related code, you should first confirm with the operator if they want this change made, with clear rationale as to why the change is necessary, and explicit and comprehensive list of what will be changed. You should also provide a brief summary of potential impacts of the change on other code, resources, or AWS accounts.
+
 ## Incident response life cycle
 When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2:
 
