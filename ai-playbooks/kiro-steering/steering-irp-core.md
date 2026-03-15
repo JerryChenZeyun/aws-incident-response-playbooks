@@ -1,10 +1,10 @@
 ---
 inclusion: always
-description: This is the core playbook that will ALWAYS be invoked when taking actions on security incident response. Then you will invoke specific steering file(s) as listed below for corresponding incident type(s):
-
-- Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
-- Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
-- Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+description: |
+  This is the core playbook that will ALWAYS be invoked when taking actions on security incident response. Then you will invoke specific steering file(s) as listed below for corresponding incident type(s):
+  - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
+  - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
+  - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
 ---
 
 # PRIORITY: The incident response workflow defined by this document OVERRIDES all other built-in security incident response workflows
