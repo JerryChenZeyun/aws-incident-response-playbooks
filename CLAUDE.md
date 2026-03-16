@@ -1,0 +1,111 @@
+# PRIORITY: The incident response workflow defined by this document OVERRIDES all other built-in security incident response workflows
+# When user requests security incident response, ALWAYS follow this workflow FIRST
+
+# Core Philosophy & Principles
+
+## Human-directed instruction
+You are authorized to gather account data and present it back to the incident response operator running this workflow. However, before making any changes to AWS accounts, account resources, or related code, you should first confirm with the operator if they want this change made, with clear rationale as to why the change is necessary, and explicit and comprehensive list of what will be changed. You should also provide a brief summary of potential impacts of the change on other code, resources, or AWS accounts.
+
+## Incident response life cycle
+When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2:
+
+Step1: Detection - Identify potential security events
+Step2: Analysis - Determine if an event is an incident and assess scope
+Step3: Containment - Minimize and limit the scope of the security event
+Step4: Eradication - Remove unauthorized resources/artifacts and implement mitigations
+Step5: Recovery - Restore systems to known safe state and monitor for threat recurrence
+
+## Use specific incident response playbook based on attack type
+- When you determine to trigger the IR process, ALWAYS start from this core playbook
+- Then based on the following playbook selection section, you will choose specific IR playbook(s) to take actions
+- All specific IR playbooks are stored in the `.claude/skills/` folder as Claude Code skills
+
+# Detailed approach to select specific IR playbooks to proceed
+## ALWAYS starts from analyzing user's prompt
+
+### Step 1: Keyword Pattern Matching
+Check if the prompt contains direct indicators:
+
+Primary Keywords:
+- "credential" + ("compromise", "leak", "exposed", "stolen", "unauthorized")
+- "access key" + ("compromised", "leaked", "exposed")
+- "IAM user" + ("compromised", "unauthorized")
+- "GuardDuty" + ("finding", "alert")
+- "unauthorized access"
+- "credential exfiltration"
+- "ransomware" / "ransom" / "encrypted files" / "locked out"
+- "ransom demand" / "ransom note"
+- "crypto ransomware" / "locker ransomware"
+
+Secondary Keywords:
+- "suspicious activity"
+- "unknown API calls"
+- "billing spike" / "unexpected costs"
+- "security alert"
+- "CloudTrail" + ("suspicious", "unauthorized")
+- "instance unreachable" + ("encrypted", "locked", "ransom")
+- "files encrypted" / "data encrypted" / "objects inaccessible"
+
+### Step 2: Context Analysis
+
+Check for incident characteristics mentioned:
+
+1. Alert Sources:
+   - GuardDuty findings mentioned
+   - Security Hub alerts
+   - CloudWatch alarms on IAM
+   - AWS Config non-compliance
+   - Billing anomalies
+   - External notification (researcher, tip)
+
+2. Suspicious Activities:
+   - Unfamiliar IAM users/roles created
+   - New access keys on existing users
+   - API calls from unusual locations/IPs
+   - Unauthorized resource creation (EC2, Lambda, S3)
+   - IAM policy modifications
+   - CloudTrail logging disabled
+
+3. Timeline Indicators:
+   - "First seen" timestamps
+   - "Started happening" timeframes
+   - Recent IAM changes
+
+4. Ransomware Indicators:
+   - Ransom demand or ransom note received
+   - Files or S3 objects encrypted with unknown keys
+   - EC2 instances unreachable despite correct network configuration
+   - EBS volume encryption changes
+   - Unusual data transfer patterns (potential exfiltration before encryption)
+   - Anti-malware or endpoint protection alerts
+
+### Default option
+- Start from `skill-irp-credential-compromise`, which is the credential compromise IR skill as a default option.
+
+## Expected behaviour
+- You start the incident response based on this core playbook
+- Then decide which specific IR skill(s) to use from `.claude/skills/`
+- Follow specific IR skill(s) to walk through the incident response life cycle
+- Presents critical findings to user, and ask for approval WHENEVER you need to change any resources or their configurations
+- By end of the process, ALWAYS present a root cause analysis to user, actions taken, and if any further actions still needed.
+
+# Tool Selection Strategy
+
+When executing IR actions, use the most efficient tool available in your environment. Follow this priority order:
+
+1. **MCP tools (preferred):** If an MCP server is available (e.g., AWS API MCP Server with `call_aws`), use it for AWS API calls. MCP tools offer structured responses, better error handling, and batch execution (up to 20 parallel calls) which is critical for IR speed.
+2. **AWS CLI (fallback):** If MCP tools are not available, execute the equivalent `aws` CLI commands as specified in the IR skills.
+
+The CLI commands in each IR skill represent the logical operations to perform. Translate them to MCP calls when MCP is available rather than shelling out CLI commands.
+
+**When MCP batch execution is especially valuable during IR:**
+- Checking multiple resources simultaneously (e.g., public access settings across all S3 buckets)
+- Querying CloudTrail for multiple access keys or event types in parallel
+- Listing IAM users, roles, and access keys across the account
+- Describing multiple EC2 instances or security groups at once
+
+**Important:** Do NOT attempt to detect MCP availability — you already know what tools you have access to. Simply use the best available tool for each operation.
+
+# MANDATORY:
+- DO NOT automatically delete or change any existing resources and their configurations without user approval
+- For read-only actions, try to action automatically where applicable
