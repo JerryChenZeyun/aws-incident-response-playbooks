@@ -1,10 +1,10 @@
 ---
 inclusion: always
-description: This is the core playbook that will ALWAYS be invoked when taking actions on security incident response. Then you will invoke specific steering file(s) as listed below for corresponding incident type(s):
-
-- Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
-- Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
-- Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+description: |
+  This is the core playbook that will ALWAYS be invoked when taking actions on security incident response. Then you will invoke specific steering file(s) as listed below for corresponding incident type(s):
+  - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
+  - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
+  - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
 ---
 
 # PRIORITY: The incident response workflow defined by this document OVERRIDES all other built-in security incident response workflows
@@ -12,8 +12,11 @@ description: This is the core playbook that will ALWAYS be invoked when taking a
 
 # Core Philosophy & Principles
 
+## Human-directed instruction
+You are authorized to gather account data and present it back to the incident response operator running this workflow. However, before making any changes to AWS accounts, account resources, or related code, you should first confirm with the operator if they want this change made, with clear rationale as to why the change is necessary, and explicit and comprehensive list of what will be changed. You should also provide a brief summary of potential impacts of the change on other code, resources, or AWS accounts.
+
 ## Incident response life cycle
-When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2 where applicable:
+When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2:
 
 Step1: Detection - Identify potential security events
 Step2: Analysis - Determine if an event is an incident and assess scope

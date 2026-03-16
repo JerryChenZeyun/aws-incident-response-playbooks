@@ -6,7 +6,7 @@ description: Guidance steering file for creating new incident response (IR) stee
 # Guidance: Translating IR Playbooks into Agent-Centric Steering Files
 
 ## Purpose
-This steering file guides you (the agent) through creating a new incident response steering file by translating a human-centric IR playbook from the `playbooks/` folder into an agent-actionable steering file stored in `.kiro/steering/incident-response-playbook-reference/`.
+This steering file guides you (the agent) through creating a new incident response [steering file](https://kiro.dev/docs/steering/) by translating a human-centric IR playbook from the `playbooks/` folder into an agent-actionable steering file stored in `.kiro/steering/incident-response-playbook-reference/`.
 
 ## Procedure Overview
 
@@ -211,6 +211,7 @@ Edit `.kiro/steering/incident-response-playbook-core.md`:
 Edit each existing steering file in `.kiro/steering/incident-response-playbook-reference/` and add the new playbook's invoke line to their `description` front-matter, so all sibling playbooks cross-reference each other.
 
 For example, add to each sibling's front-matter description:
+
 ```
 - Invoke with "steering-irp-<short-name>.md" when responding to <incident scenario>.
 ```
