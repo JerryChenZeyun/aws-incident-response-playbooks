@@ -62,6 +62,10 @@ aws cloudtrail lookup-events \
 
 Look for these management events: `PutBucketPolicy`, `PutBucketAcl`, `PutPublicAccessBlock`, `DeletePublicAccessBlock`, `PutObjectAcl`.
 
+**Look for bulk `GetObject` as an active exfiltration signal:**
+
+A high volume of `GetObject` calls (50+ within seconds) from a single access key against a single bucket is a strong indicator of in-progress or recent data exfiltration. When reviewing CloudTrail logs, filter for `GetObject` events and check the event density — an attacker scripting an `aws s3 sync` or similar command will produce a burst pattern that stands out from normal application access. Also look for `ListObjects`/`ListBucket` calls immediately preceding the `GetObject` burst, which indicate the attacker was enumerating before downloading.
+
 **Check for IAM role trust policy changes:**
 ```bash
 aws cloudtrail lookup-events \

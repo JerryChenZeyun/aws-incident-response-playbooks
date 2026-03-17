@@ -45,6 +45,8 @@ Secondary Keywords:
 - "CloudTrail" + ("suspicious", "unauthorized")
 - "instance unreachable" + ("encrypted", "locked", "ransom")
 - "files encrypted" / "data encrypted" / "objects inaccessible"
+- "strange bucket" / "unknown bucket" / "unexpected S3 bucket" / "suspicious bucket name"
+- "unrecognized resource" / "unknown resource" / "unexpected resource"
 
 ### Step 2: Context Analysis
 
@@ -90,6 +92,18 @@ Check for incident characteristics mentioned:
 - Follow specific IR skill(s) to walk through the incident response life cycle
 - Presents critical findings to user, and ask for approval WHENEVER you need to change any resources or their configurations
 - By end of the process, ALWAYS present a root cause analysis to user, actions taken, and if any further actions still needed.
+
+# Investigation Resilience Principle
+
+During Phase 2 (Analysis), some investigation paths may be blocked — for example, an IAM policy or SCP may deny access to certain APIs, a service may be disabled, or expected data may be in a different location than the skill prescribes. **Do not stop the investigation when blocked.** Apply reasoning to find an equivalent fallback method to retrieve the same data through a different path.
+
+Examples of fallback thinking:
+- `cloudtrail:LookupEvents` denied → find the CloudTrail S3 trail via `describe-trails`, then download and parse `.json.gz` log files directly from S3
+- GuardDuty API denied → look for equivalent signals in CloudTrail management events, Security Hub, or AWS Config
+- S3 server access logs unavailable → check CloudTrail S3 data events if enabled
+- Direct API access denied → check if data is available via Resource Explorer, AWS Config recorded state, or a related service
+
+Apply this principle broadly across all IR phases: if a specific tool or API is unavailable, reason about what other data sources in the AWS ecosystem could provide equivalent evidence before escalating or stopping.
 
 # Tool Selection Strategy
 

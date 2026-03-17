@@ -155,7 +155,25 @@ aws cloudtrail lookup-events \
 
 **For comprehensive analysis, use Athena with CloudTrail logs in S3.**
 
-### 3.2 Identify Suspicious Actions
+### 3.2 Correlate Attacker Activity by Source IP
+
+After querying CloudTrail for a known compromised access key, extract the `sourceIPAddress` from attacker events. Then search for **other IAM users or roles that made API calls from the same IP** — the attacker may have compromised multiple credentials and be operating them all from the same host.
+
+```bash
+# Extract unique source IPs used by the compromised key
+# (run against downloaded CloudTrail logs or Athena)
+# Look for the same IP appearing under a different userName in other log entries
+
+# If you identify a suspicious IP, search for all users/keys that called from it:
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=SourceIPAddress,AttributeValue=<attacker-ip> \
+  --start-time <compromise-timestamp> \
+  --max-results 50
+```
+
+Pivot to any additional compromised credentials found and repeat Parts 2 and 3 for each one.
+
+### 3.3 Identify Suspicious Actions (original 3.2)
 
 Look for these API calls in the results:
 
@@ -187,6 +205,13 @@ aws iam list-users
 
 # List all roles (look for unfamiliar ones)
 aws iam list-roles --query 'Roles[?contains(RoleName, `admin`) || contains(RoleName, `test`)]'
+
+# Scan ALL IAM users for active access keys — do this systematically, not just for known suspects
+for user in $(aws iam list-users --query 'Users[].UserName' --output text); do
+  keys=$(aws iam list-access-keys --user-name "$user" \
+    --query 'AccessKeyMetadata[?Status==`Active`].[AccessKeyId,Status,CreateDate]' --output text)
+  if [ -n "$keys" ]; then echo "=== $user ==="; echo "$keys"; fi
+done
 
 # Check for new access keys on existing users
 aws iam list-access-keys --user-name <each-user>
