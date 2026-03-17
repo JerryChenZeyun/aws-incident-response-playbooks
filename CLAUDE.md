@@ -80,11 +80,13 @@ Check for incident characteristics mentioned:
    - Anti-malware or endpoint protection alerts
 
 ### Default option
-- Start from `skill-irp-credential-compromise`, which is the credential compromise IR skill as a default option.
+- If no keywords from Step 1 or Step 2 match, fall back to `skill-irp-credential-compromise` as the starting point.
+- The default does NOT override or suppress other skills — if keyword or context analysis matches multiple attack types, invoke ALL applicable skills in parallel.
 
 ## Expected behaviour
 - You start the incident response based on this core playbook
 - Then decide which specific IR skill(s) to use from `.claude/skills/`
+- **Re-evaluate skill selection as new evidence emerges** — if investigation findings reveal additional attack types (e.g., ransomware indicators discovered mid-investigation), invoke the corresponding additional skill(s) immediately rather than continuing with only the initially selected skill(s)
 - Follow specific IR skill(s) to walk through the incident response life cycle
 - Presents critical findings to user, and ask for approval WHENEVER you need to change any resources or their configurations
 - By end of the process, ALWAYS present a root cause analysis to user, actions taken, and if any further actions still needed.
