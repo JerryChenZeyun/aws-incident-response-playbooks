@@ -36,6 +36,11 @@ Primary Keywords:
 - "ransomware" / "ransom" / "encrypted files" / "locked out"
 - "ransom demand" / "ransom note"
 - "crypto ransomware" / "locker ransomware"
+- "build from scratch" + ("IR", "incident response", "playbook", "skill", "runbook")
+- "design IR process" / "design incident response process"
+- "create custom IR workflow"
+- "build a new IR skill" / "create a new IR skill"
+- "new security runbook from scratch"
 
 Secondary Keywords:
 - "suspicious activity"
@@ -80,6 +85,15 @@ Check for incident characteristics mentioned:
    - EBS volume encryption changes
    - Unusual data transfer patterns (potential exfiltration before encryption)
    - Anti-malware or endpoint protection alerts
+
+5. Builder Indicators (route to skill-irp-builder):
+   - User describes an incident type but no existing skill covers it
+   - User explicitly requests building/designing a new workflow
+   - User says "from scratch", "custom", or "design" in authoring context
+
+### Dispatch: Builder Skill
+- If Builder Indicators match -> invoke `skill-irp-builder`
+- `skill-irp-builder` is an authoring workflow, not a live IR workflow — do not combine it with live IR skills
 
 ### Default option
 - If no keywords from Step 1 or Step 2 match, fall back to `skill-irp-credential-compromise` as the starting point.
