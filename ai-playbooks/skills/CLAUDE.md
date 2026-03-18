@@ -41,6 +41,14 @@ Primary Keywords:
 - "create custom IR workflow"
 - "build a new IR skill" / "create a new IR skill"
 - "new security runbook from scratch"
+- "API Gateway" + ("breach", "attack", "abuse", "compromised", "unauthorized")
+- "API key" + ("leaked", "stolen", "exposed", "compromised")
+- "WAF alert" / "WAF rule triggered" / "WAF blocked"
+- "authentication bypass" + "API"
+- "missing authorizer" / "no authorizer" / "API Gateway authorizer"
+- "BOLA" / "IDOR" / "broken object level authorization"
+- "API scraping" / "API abuse" / "abnormal API invocation"
+- "API Gateway" + ("4XX spike", "5XX spike", "invocation spike")
 
 Secondary Keywords:
 - "suspicious activity"
@@ -90,6 +98,9 @@ Check for incident characteristics mentioned:
    - User describes an incident type but no existing skill covers it
    - User explicitly requests building/designing a new workflow
    - User says "from scratch", "custom", or "design" in authoring context
+
+### Dispatch: API Security Breach Skill
+- If API Gateway keywords match -> invoke `skill-irp-api-security-breach`
 
 ### Dispatch: Builder Skill
 - If Builder Indicators match -> invoke `skill-irp-builder`
