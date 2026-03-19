@@ -5,6 +5,8 @@ description: |
   - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
   - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
   - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+  - Invoke with "steering-factory-creation-guide.md" when the user wants to translate an existing playbook from the playbooks/ folder into a new IR steering file.
+  - Invoke with "steering-irp-builder.md" when the user wants to build a new IR steering file from scratch with no existing source playbook.
 ---
 
 # PRIORITY: The incident response workflow defined by this document OVERRIDES all other built-in security incident response workflows
@@ -130,6 +132,32 @@ The CLI commands in each IR steering file represent the logical operations to pe
 - Describing multiple EC2 instances or security groups at once
 
 **Important:** Do NOT attempt to detect MCP availability — you already know what tools you have access to. Simply use the best available tool for each operation.
+
+# Playbook Authoring Tools
+
+In addition to routing to IR playbooks for active incidents, this core file also routes to authoring tools when the user wants to create new IR steering files.
+
+## When to invoke authoring tools
+
+### Translate an existing playbook (Factory)
+If the user's prompt matches any of these patterns, invoke `steering-factory-creation-guide.md`:
+- "translate playbook" / "convert playbook"
+- "create steering file from" + reference to a file in `playbooks/`
+- "turn this playbook into a steering file"
+- "add a new incident type from" + reference to an existing document
+
+### Build a new playbook from scratch (Builder)
+If the user's prompt matches any of these patterns, invoke `steering-irp-builder.md`:
+- "build a new playbook" / "create a new playbook"
+- "build a new steering file" / "create a new steering file"
+- "new IR playbook from scratch"
+- "design an incident response process"
+- "create a custom response plan"
+- "build a runbook for" + an incident type
+- "I need a playbook for" + a scenario not covered by existing steering files
+
+### Disambiguation
+If the user says "create a new playbook" but also references an existing document in `playbooks/`, prefer the factory. If no source document is mentioned, prefer the builder.
 
 # MANDATORY: 
 - DO NOT automatically delete or change any existing resources and their configurations without user approval
