@@ -5,6 +5,7 @@ description: |
   - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
   - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
   - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+  - Invoke with "steering-irp-api-security-breach.md" when responding to API security incidents (OWASP API Top 10).
   - Invoke with "steering-factory-creation-guide.md" when the user wants to translate an existing playbook from the playbooks/ folder into a new IR steering file.
   - Invoke with "steering-irp-builder.md" when the user wants to build a new IR steering file from scratch with no existing source playbook.
 ---
@@ -47,6 +48,14 @@ Primary Keywords:
 - "ransomware" / "ransom" / "encrypted files" / "locked out"
 - "ransom demand" / "ransom note"
 - "crypto ransomware" / "locker ransomware"
+- "API" + ("attack", "breach", "exploit", "abuse", "vulnerability", "injection", "unauthorized")
+- "OWASP" / "BOLA" / "BFLA" / "broken authentication" / "broken authorization"
+- "API Gateway" + ("attack", "suspicious", "abuse", "exploit")
+- "WAF" + ("alert", "block", "trigger", "rule")
+- "SQL injection" / "command injection" / "XSS" + ("API", "endpoint")
+- "rate limiting" + ("bypass", "exhaustion", "abuse")
+- "SSRF" / "server-side request forgery"
+- "API key" + ("compromised", "leaked", "stolen", "abuse")
 
 Secondary Keywords:
 - "suspicious activity"
@@ -58,6 +67,12 @@ Secondary Keywords:
 - "files encrypted" / "data encrypted" / "objects inaccessible"
 - "strange bucket" / "unknown bucket" / "unexpected S3 bucket" / "suspicious bucket name"
 - "unrecognized resource" / "unknown resource" / "unexpected resource"
+- "4xx spike" / "5xx spike" / "error rate" + ("API", "endpoint")
+- "brute force" + ("login", "API", "authentication")
+- "credential stuffing"
+- "data leakage" / "excessive data" + ("API", "response")
+- "bot traffic" / "automated abuse" + ("API", "endpoint")
+- "unexpected API traffic" / "anomalous requests"
 
 ### Step 2: Context Analysis
 
@@ -84,7 +99,19 @@ Check for incident characteristics mentioned:
    - "Started happening" timeframes
    - Recent IAM changes
 
-4. Ransomware Indicators:
+4. API Security Indicators:
+   - WAF rule triggers (SQLi, XSS, rate-based)
+   - API Gateway 4xx/5xx error rate spikes
+   - Unusual API traffic patterns or volumes
+   - Brute-force authentication attempts
+   - Sequential ID enumeration (BOLA pattern)
+   - Unauthorized endpoint access attempts
+   - Data leakage in API responses
+   - Lambda/ECS GuardDuty findings related to API backends
+   - API key abuse or compromise
+   - SSRF attempts through API parameters
+
+5. Ransomware Indicators:
    - Ransom demand or ransom note received
    - Files or S3 objects encrypted with unknown keys
    - EC2 instances unreachable despite correct network configuration
