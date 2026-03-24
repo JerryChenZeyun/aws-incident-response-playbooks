@@ -582,6 +582,8 @@ Checklist:
 - [ ] API keys rotated if any were compromised
 - [ ] Backend Lambda/ECS/EKS patched and verified
 
+If eradication reveals a different attack vector (e.g., credential compromise, data exfiltration beyond the API layer), loop back to Part 1 and invoke the corresponding additional playbook.
+
 ---
 
 ## Part 4: Recover from the Incident
@@ -711,7 +713,7 @@ Based on findings:
 - [ ] Set up CloudWatch alarms for API error rate and latency anomalies
 - [ ] Consider AWS Shield Advanced for DDoS protection on API endpoints
 - [ ] Schedule regular API security assessments (penetration testing)
-- [ ] Update this playbook with lessons learned
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -733,3 +735,4 @@ If required by your jurisdiction:
 - [GuardDuty Lambda Protection](https://docs.aws.amazon.com/guardduty/latest/ug/lambda-protection.html)
 - [GuardDuty Runtime Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/findings-runtime-monitoring.html)
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)

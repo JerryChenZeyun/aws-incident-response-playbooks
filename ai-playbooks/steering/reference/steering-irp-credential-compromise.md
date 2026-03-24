@@ -255,6 +255,8 @@ aws lambda delete-function --function-name <function-name>
 
 If you discovered new credentials (new IAM users, roles, access keys), repeat Part 3 for each set of credentials until no new persistence mechanisms are found.
 
+If eradication reveals a different attack vector (e.g., ransomware indicators, S3 data exfiltration), loop back to Part 1 and invoke the corresponding additional playbook.
+
 ---
 
 ## Part 4: Recover from the Incident
@@ -295,6 +297,8 @@ aws ec2 terminate-instances --instance-ids <instance-id>
 - [ ] Check monitoring dashboards for anomalies
 - [ ] Update CMDB with any resource changes
 
+If suspicious activity reoccurs during recovery monitoring, loop back to Part 1 and reassess the scope and attack vector.
+
 ---
 
 ## Part 5: Post-Incident Activity
@@ -322,7 +326,7 @@ Based on findings:
 - [ ] Review IAM policies (least privilege)
 - [ ] Enable/enhance monitoring (GuardDuty, CloudTrail, Config)
 - [ ] Consider SCPs or permission boundaries
-- [ ] Update this playbook with lessons learned
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -338,3 +342,4 @@ If required by your jurisdiction:
 - [AWS IAM: Revoking Role Sessions](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_revoke-sessions.html)
 - [Querying CloudTrail Logs with Athena](https://aws.amazon.com/premiumsupport/knowledge-center/athena-tables-search-cloudtrail-logs/)
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)

@@ -469,6 +469,8 @@ Based on root cause analysis:
 - [ ] Block identified malicious IPs/domains in security groups or WAF rules
 - [ ] Enforce IMDSv2 if SSRF was part of the attack chain
 
+If eradication reveals a different attack vector (e.g., credential compromise, S3 data exfiltration), loop back to Part 1 and invoke the corresponding additional playbook.
+
 ```bash
 # Enforce IMDSv2 on instances
 aws ec2 modify-instance-metadata-options \
@@ -606,7 +608,7 @@ Based on findings:
 - [ ] Implement network segmentation to limit lateral movement
 - [ ] Deploy endpoint protection on EC2 instances
 - [ ] Consider SCPs or permission boundaries for additional guardrails
-- [ ] Update this playbook with lessons learned
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -621,7 +623,7 @@ If required by your jurisdiction:
 ## References
 
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
-- [NIST SP 800-61 R2 — Computer Security Incident Handling Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
 - [AWS Well-Architected Security Pillar](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
 - [Amazon S3 Security Best Practices](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)
 - [AWS Backup Documentation](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)

@@ -226,6 +226,7 @@ Draft:
 - Audit subsections (identify malicious artifacts)
 - Removal subsections with CLI commands
 - `# MCP batch opportunity:` comments where applicable
+- Loop-back instruction at end of Part 3: if eradication reveals a different attack vector, return to Part 1 and invoke the corresponding additional playbook
 
 ### 5.3 Research Offer
 
@@ -253,6 +254,7 @@ Draft:
 - `## Part 4: Recover from the Incident` with `**Goal:**` statement
 - Restore steps with CLI commands
 - `### 4.x Verify Recovery` checklist using `- [ ]` checkboxes
+- Loop-back instruction at end of Part 4: if suspicious activity reoccurs during recovery monitoring, return to Part 1 and reassess
 
 ### 6.3 Research Offer
 
@@ -306,6 +308,7 @@ If the user wants customization, ask:
 
 Every steering file must include:
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
 
 ### 8.2 Ask for Additional Links
 
@@ -355,6 +358,8 @@ Before saving, verify the generated steering file passes ALL checks:
 - [ ] All CLI commands use `<placeholder>` params (not hardcoded values)
 - [ ] `⚠️ **Warning:**` callouts present for production-impacting actions
 - [ ] `# MCP batch opportunity:` comments where parallel execution applies
+- [ ] Loop-back instructions present at end of Parts 3 and 4 (return to Part 1 if new evidence emerges)
+- [ ] Part 5 "Update Defenses" includes human-approval language for steering file modifications
 - [ ] `## References` section includes AWS Security IR Guide
 - [ ] File named `steering-irp-<short-name>.md`
 - [ ] No `<!-- TODO: validate -->` markers remain in the final output
@@ -443,6 +448,8 @@ description: |
 **Goal:** <one sentence>
 ### 3.x <Eradication steps with CLI commands>
 
+If eradication reveals a different attack vector, loop back to Part 1 and invoke the corresponding additional playbook.
+
 ---
 
 ## Part 4: Recover from the Incident
@@ -450,12 +457,15 @@ description: |
 ### 4.x <Recovery steps>
 ### 4.x Verify Recovery
 
+If suspicious activity reoccurs during recovery monitoring, loop back to Part 1 and reassess the scope and attack vector.
+
 ---
 
 ## Part 5: Post-Incident Activity
 ### 5.1 Document Lessons Learned
 ### 5.2 Retrospective Questions
 ### 5.3 Update Defenses
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 ### 5.4 Regulatory Notifications
 
 ---

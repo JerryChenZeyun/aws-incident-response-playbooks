@@ -19,13 +19,15 @@ description: |
 You are authorized to gather account data and present it back to the incident response operator running this workflow. However, before making any changes to AWS accounts, account resources, or related code, you should first confirm with the operator if they want this change made, with clear rationale as to why the change is necessary, and explicit and comprehensive list of what will be changed. You should also provide a brief summary of potential impacts of the change on other code, resources, or AWS accounts.
 
 ## Incident response life cycle
-When you start incident response (IR) process, ALWAYS follow the IR life cycle outlined by NIST 800-61 R2:
+When you start incident response (IR) process, ALWAYS follow the IR life cycle aligned with NIST 800-61 R3 and CSF 2.0:
 
 Step1: Detection - Identify potential security events
 Step2: Analysis - Determine if an event is an incident and assess scope
 Step3: Containment - Minimize and limit the scope of the security event
 Step4: Eradication - Remove unauthorized resources/artifacts and implement mitigations
 Step5: Recovery - Restore systems to known safe state and monitor for threat recurrence
+
+**Cyclical lifecycle:** This is NOT a linear process. Findings at any phase may require looping back to earlier phases. For example, eradication may reveal new compromised credentials (loop back to Detection/Analysis), or recovery monitoring may detect reinfection (loop back to Detection). Always reassess scope when new evidence emerges.
 
 ## Use specific incident response playbook based on attack type
 - When you determine to trigger the IR process, ALWAYS start from this core playbook

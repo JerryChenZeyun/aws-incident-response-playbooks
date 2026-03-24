@@ -69,7 +69,7 @@ Rules:
 
 ### 3.3 Required Document Structure
 
-The new steering file MUST follow this exact 5-part structure aligned with NIST 800-61 R2:
+The new steering file MUST follow this exact 5-part structure aligned with NIST 800-61 R3:
 
 ```
 # Playbook: <Incident Type Title>
@@ -147,6 +147,8 @@ When translating from the human-centric playbook to the agent-centric steering f
 - Specific API call names to look for in CloudTrail (relevant to the incident type)
 - Warning callouts (⚠️) for actions that affect production workloads
 - Goal statements at the start of Parts 2, 3, and 4
+- Loop-back instructions at the end of Parts 3 and 4: if new evidence or a different attack vector is discovered, direct the agent to return to Part 1 and reassess scope
+- In Part 5 "Update Defenses", include: "Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files"
 
 **PRESERVE the following from source playbooks:**
 - The logical flow and ordering of incident response phases
@@ -186,6 +188,8 @@ Before writing the file, verify:
 - [ ] CLI commands use placeholder parameters, not hardcoded values
 - [ ] Warning callouts exist for destructive or production-impacting actions
 - [ ] Verification steps exist after containment and recovery
+- [ ] Loop-back instructions present at end of Parts 3 and 4 (return to Part 1 if new evidence emerges)
+- [ ] Part 5 "Update Defenses" includes human-approval language for steering file modifications
 - [ ] References section includes relevant AWS documentation links
 - [ ] No legal boilerplate or template meta-commentary remains from the source playbook
 - [ ] File is named `steering-irp-<short-name>.md`

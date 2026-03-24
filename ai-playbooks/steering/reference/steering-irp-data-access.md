@@ -306,6 +306,8 @@ aws iam delete-role --role-name <unauthorized-role>
 - [ ] Close/remove any unauthorized IAM users, roles, or identity providers
 - [ ] Flag credential handling processes for post-incident review
 
+If eradication reveals a different attack vector (e.g., ransomware indicators, additional compromised credentials beyond S3 access), loop back to Part 1 and invoke the corresponding additional playbook.
+
 ---
 
 ## Part 4: Recover from the Incident
@@ -378,8 +380,8 @@ Based on findings:
 - [ ] Update risk documents with newly discovered threat/vulnerability combinations
 - [ ] Implement required infrastructure or application configuration changes
 - [ ] Update CMDB entries for affected applications and buckets
-- [ ] Review and update this playbook with lessons learned
 - [ ] Assign follow-up actions from Parts 3, 4, and 5 and track to completion
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -400,3 +402,4 @@ If required by your jurisdiction:
 - [IMDSv2 for SSRF Mitigation](https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/)
 - [Querying CloudTrail Logs with Athena](https://aws.amazon.com/premiumsupport/knowledge-center/athena-tables-search-cloudtrail-logs/)
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
