@@ -5,6 +5,7 @@ description: |
   - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
   - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
   - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+  - Invoke with "steering-irp-api-security-breach.md" when responding to API security incidents.
 ---
 
 # Playbook: Ransomware
@@ -34,6 +35,8 @@ Common sources for ransomware alerts:
 - **GuardDuty findings** (e.g., malware-related or unauthorized access findings)
 - **Security Hub alerts**
 - **Ransom demand** received via email, on-screen message, or alternate channel
+- **Suspicious S3 bucket with threatening name** (e.g., `we-stole-ur-data-*`, `your-files-encrypted-*`) discovered during routine account review
+- **Ransom note object found in S3** (e.g., `README_DECRYPT.txt`, `warning.txt`, `all_your_data_are_belong_to_us.txt`)
 - **Billing anomalies** (unexpected cost spikes from attacker resource usage)
 - **Amazon Inspector findings** (known CVE exploitation)
 - **External notification** (security researcher, law enforcement, anonymous tip)
@@ -43,6 +46,7 @@ Common sources for ransomware alerts:
 Identify the variant to guide response strategy:
 - **Crypto ransomware** — files/objects are encrypted (check S3 object properties for unexpected encryption keys, EBS volume encryption changes)
 - **Locker ransomware** — device access is blocked (instance unreachable but running)
+- **Extortion ransomware (delete + extort)** — data is exfiltrated then deleted (not encrypted), with threat to publish or sell unless ransom is paid. No encryption occurs; the leverage is data exposure. Look for: bulk `GetObject` followed by bulk `DeleteObject` in CloudTrail, a newly created bucket containing a ransom note, and `warning.txt`/`README` objects placed in victim buckets.
 - **Unknown/hybrid** — treat as crypto ransomware until confirmed otherwise
 
 **Check S3 object encryption (if S3 objects are inaccessible):**
@@ -187,15 +191,76 @@ aws ec2 create-network-acl-entry \
 
 ### 2.2 Contain S3-Based Ransomware
 
-If S3 objects have been re-encrypted or access is blocked:
+This section covers two S3 ransomware patterns: **crypto** (objects re-encrypted) and **extortion** (objects exfiltrated then deleted, ransom note left in a new attacker-created bucket).
+
+**Step 1 — Identify and investigate any suspicious new buckets:**
 
 ```bash
-# Enable Block Public Access
+# List all buckets with creation timestamps — attacker-created buckets will postdate normal resources
+aws s3api list-buckets --query 'Buckets[].[Name,CreationDate]' --output table
+
+# List contents of any suspicious bucket (ransom notes, exfiltrated data)
+aws s3 ls s3://<suspicious-bucket> --recursive
+
+# Read any ransom note objects
+aws s3 cp s3://<suspicious-bucket>/<ransom-note-key> -
+```
+
+**Step 2 — Check all victim buckets for planted ransom notes:**
+
+```bash
+# Look for unexpected objects in buckets that should not contain them
+# Common ransom note filenames: warning.txt, README_DECRYPT.txt, !!!HOW_TO_DECRYPT!!!.txt
+aws s3 ls s3://<bucket-name> | grep -iE 'warning|readme|decrypt|ransom|locked|restore'
+```
+
+**Step 3 — Assess data recoverability via versioning:**
+
+```bash
+# Check versioning status — if Suspended or not enabled, deleted objects are NOT recoverable
+aws s3api get-bucket-versioning --bucket <bucket-name>
+
+# If versioning is Enabled, check for delete markers on deleted objects
+aws s3api list-object-versions --bucket <bucket-name> \
+  --query 'DeleteMarkers[].[Key,LastModified,VersionId]' --output table
+
+# If versioning is Enabled, restore a deleted object by removing its delete marker
+aws s3api delete-object --bucket <bucket-name> --key <object-key> \
+  --version-id <delete-marker-version-id>
+```
+
+⚠️ **If versioning was NOT enabled on the bucket when the deletion occurred, the objects are permanently gone.** Document this for the impact assessment and regulatory notification decisions.
+
+**Step 4 — Restrict the attacker-created ransom bucket:**
+
+```bash
+# Prevent further writes to the attacker's bucket while preserving it as evidence
+aws s3api put-bucket-policy --bucket <attacker-bucket-name> --policy '{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Deny",
+    "Principal": "*",
+    "Action": "s3:*",
+    "Resource": [
+      "arn:aws:s3:::<attacker-bucket-name>",
+      "arn:aws:s3:::<attacker-bucket-name>/*"
+    ],
+    "Condition": {
+      "StringNotEquals": {"aws:PrincipalAccount": "<your-account-id>"}
+    }
+  }]
+}'
+```
+
+**Step 5 — Lock down victim buckets to stop further access:**
+
+```bash
+# Enable Block Public Access on all affected buckets
 aws s3api put-public-access-block --bucket <bucket-name> \
   --public-access-block-configuration \
   BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
 
-# Restrict bucket policy to deny external access
+# Apply restrictive bucket policy to deny all external principals
 aws s3api put-bucket-policy --bucket <bucket-name> --policy '{
   "Version": "2012-10-17",
   "Statement": [{
@@ -404,6 +469,8 @@ Based on root cause analysis:
 - [ ] Block identified malicious IPs/domains in security groups or WAF rules
 - [ ] Enforce IMDSv2 if SSRF was part of the attack chain
 
+If eradication reveals a different attack vector (e.g., credential compromise, S3 data exfiltration), loop back to Part 1 and invoke the corresponding additional playbook.
+
 ```bash
 # Enforce IMDSv2 on instances
 aws ec2 modify-instance-metadata-options \
@@ -541,7 +608,7 @@ Based on findings:
 - [ ] Implement network segmentation to limit lateral movement
 - [ ] Deploy endpoint protection on EC2 instances
 - [ ] Consider SCPs or permission boundaries for additional guardrails
-- [ ] Update this playbook with lessons learned
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -556,7 +623,7 @@ If required by your jurisdiction:
 ## References
 
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
-- [NIST SP 800-61 R2 — Computer Security Incident Handling Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
 - [AWS Well-Architected Security Pillar](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
 - [Amazon S3 Security Best Practices](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)
 - [AWS Backup Documentation](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)

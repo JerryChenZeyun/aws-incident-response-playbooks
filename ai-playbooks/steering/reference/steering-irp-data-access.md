@@ -5,6 +5,7 @@ description: |
   - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
   - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
   - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+  - Invoke with "steering-irp-api-security-breach.md" when responding to API security incidents.
 ---
 
 # Playbook: Unintended S3 Data Access
@@ -66,6 +67,10 @@ aws cloudtrail lookup-events \
 ```
 
 Look for these management events: `PutBucketPolicy`, `PutBucketAcl`, `PutPublicAccessBlock`, `DeletePublicAccessBlock`, `PutObjectAcl`.
+
+**Look for bulk `GetObject` as an active exfiltration signal:**
+
+A high volume of `GetObject` calls (50+ within seconds) from a single access key against a single bucket is a strong indicator of in-progress or recent data exfiltration. When reviewing CloudTrail logs, filter for `GetObject` events and check the event density — an attacker scripting an `aws s3 sync` or similar command will produce a burst pattern that stands out from normal application access. Also look for `ListObjects`/`ListBucket` calls immediately preceding the `GetObject` burst, which indicate the attacker was enumerating before downloading.
 
 **Check for IAM role trust policy changes:**
 ```bash
@@ -301,6 +306,8 @@ aws iam delete-role --role-name <unauthorized-role>
 - [ ] Close/remove any unauthorized IAM users, roles, or identity providers
 - [ ] Flag credential handling processes for post-incident review
 
+If eradication reveals a different attack vector (e.g., ransomware indicators, additional compromised credentials beyond S3 access), loop back to Part 1 and invoke the corresponding additional playbook.
+
 ---
 
 ## Part 4: Recover from the Incident
@@ -373,8 +380,8 @@ Based on findings:
 - [ ] Update risk documents with newly discovered threat/vulnerability combinations
 - [ ] Implement required infrastructure or application configuration changes
 - [ ] Update CMDB entries for affected applications and buckets
-- [ ] Review and update this playbook with lessons learned
 - [ ] Assign follow-up actions from Parts 3, 4, and 5 and track to completion
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -395,3 +402,4 @@ If required by your jurisdiction:
 - [IMDSv2 for SSRF Mitigation](https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/)
 - [Querying CloudTrail Logs with Athena](https://aws.amazon.com/premiumsupport/knowledge-center/athena-tables-search-cloudtrail-logs/)
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)

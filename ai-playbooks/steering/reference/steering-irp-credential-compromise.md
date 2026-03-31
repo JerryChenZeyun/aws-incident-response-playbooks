@@ -5,6 +5,7 @@ description: |
   - Invoke with "steering-irp-credential-compromise.md" when responding to compromised credentials.
   - Invoke with "steering-irp-data-access.md" when responding to unintended access to Amazon S3 buckets.
   - Invoke with "steering-irp-ransomware.md" when responding to ransomware incidents.
+  - Invoke with "steering-irp-api-security-breach.md" when responding to API security incidents.
 ---
 
 # Playbook: Credential Compromise
@@ -160,7 +161,25 @@ aws cloudtrail lookup-events \
 
 **For comprehensive analysis, use Athena with CloudTrail logs in S3.**
 
-### 3.2 Identify Suspicious Actions
+### 3.2 Correlate Attacker Activity by Source IP
+
+After querying CloudTrail for a known compromised access key, extract the `sourceIPAddress` from attacker events. Then search for **other IAM users or roles that made API calls from the same IP** — the attacker may have compromised multiple credentials and be operating them all from the same host.
+
+```bash
+# Extract unique source IPs used by the compromised key
+# (run against downloaded CloudTrail logs or Athena)
+# Look for the same IP appearing under a different userName in other log entries
+
+# If you identify a suspicious IP, search for all users/keys that called from it:
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=SourceIPAddress,AttributeValue=<attacker-ip> \
+  --start-time <compromise-timestamp> \
+  --max-results 50
+```
+
+Pivot to any additional compromised credentials found and repeat Parts 2 and 3 for each one.
+
+### 3.3 Identify Suspicious Actions
 
 Look for these API calls in the results:
 
@@ -184,7 +203,7 @@ Look for these API calls in the results:
 - `DeleteTrail`, `StopLogging`, `DeleteFlowLogs`
 - `DeleteBucket` (CloudTrail bucket)
 
-### 3.3 Check for Persistence Mechanisms
+### 3.4 Check for Persistence Mechanisms
 
 ```bash
 # List all IAM users (look for unfamiliar ones)
@@ -192,6 +211,13 @@ aws iam list-users
 
 # List all roles (look for unfamiliar ones)
 aws iam list-roles --query 'Roles[?contains(RoleName, `admin`) || contains(RoleName, `test`)]'
+
+# Scan ALL IAM users for active access keys — do this systematically, not just for known suspects
+for user in $(aws iam list-users --query 'Users[].UserName' --output text); do
+  keys=$(aws iam list-access-keys --user-name "$user" \
+    --query 'AccessKeyMetadata[?Status==`Active`].[AccessKeyId,Status,CreateDate]' --output text)
+  if [ -n "$keys" ]; then echo "=== $user ==="; echo "$keys"; fi
+done
 
 # Check for new access keys on existing users
 aws iam list-access-keys --user-name <each-user>
@@ -202,7 +228,7 @@ aws ec2 describe-instances \
   --output table
 ```
 
-### 3.4 Remove Attacker Resources
+### 3.5 Remove Attacker Resources
 
 For each resource identified as created by the attacker:
 
@@ -225,9 +251,11 @@ aws ec2 terminate-instances --instance-ids <instance-id>
 aws lambda delete-function --function-name <function-name>
 ```
 
-### 3.5 Iterate
+### 3.6 Iterate
 
 If you discovered new credentials (new IAM users, roles, access keys), repeat Part 3 for each set of credentials until no new persistence mechanisms are found.
+
+If eradication reveals a different attack vector (e.g., ransomware indicators, S3 data exfiltration), loop back to Part 1 and invoke the corresponding additional playbook.
 
 ---
 
@@ -269,6 +297,8 @@ aws ec2 terminate-instances --instance-ids <instance-id>
 - [ ] Check monitoring dashboards for anomalies
 - [ ] Update CMDB with any resource changes
 
+If suspicious activity reoccurs during recovery monitoring, loop back to Part 1 and reassess the scope and attack vector.
+
 ---
 
 ## Part 5: Post-Incident Activity
@@ -296,7 +326,7 @@ Based on findings:
 - [ ] Review IAM policies (least privilege)
 - [ ] Enable/enhance monitoring (GuardDuty, CloudTrail, Config)
 - [ ] Consider SCPs or permission boundaries
-- [ ] Update this playbook with lessons learned
+- [ ] Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files
 
 ### 5.4 Regulatory Notifications
 
@@ -312,3 +342,4 @@ If required by your jurisdiction:
 - [AWS IAM: Revoking Role Sessions](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_revoke-sessions.html)
 - [Querying CloudTrail Logs with Athena](https://aws.amazon.com/premiumsupport/knowledge-center/athena-tables-search-cloudtrail-logs/)
 - [AWS Security Incident Response Guide](https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/welcome.html)
+- [NIST SP 800-61 R3 — Incident Response Recommendations and Considerations for Cybersecurity Risk Management](https://csrc.nist.gov/pubs/sp/800/61/r3/final)

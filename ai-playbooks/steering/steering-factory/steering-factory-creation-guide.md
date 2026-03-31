@@ -1,12 +1,14 @@
 ---
-inclusion: always
-description: Guidance steering file for creating new incident response (IR) steering files by translating human-centric IR playbooks into agent-centric steering files.
+inclusion: manual
+description: |
+  Guidance steering file for creating new incident response (IR) steering files by translating human-centric IR playbooks into agent-centric steering files.
+  Use this steering file when you want to translate an existing playbook from the playbooks/ folder into a Kiro steering file, convert a human-centric IR playbook into an agent-actionable format, or add a new incident type to the IR steering file library from an existing source document.
 ---
 
 # Guidance: Translating IR Playbooks into Agent-Centric Steering Files
 
 ## Purpose
-This steering file guides you (the agent) through creating a new incident response [steering file](https://kiro.dev/docs/steering/) by translating a human-centric IR playbook from the `playbooks/` folder into an agent-actionable steering file stored in `.kiro/steering/incident-response-playbook-reference/`.
+This steering file guides you (the agent) through creating a new incident response [steering file](https://kiro.dev/docs/steering/) by translating a human-centric IR playbook from the `playbooks/` folder into an agent-actionable steering file stored in `.kiro/steering/kiro-steering/` and mirrored to `ai-playbooks/steering/reference/`.
 
 ## Procedure Overview
 
@@ -27,10 +29,10 @@ Read the source playbook from `playbooks/` and extract:
 
 ## Step 2: Reference Existing Steering Files
 
-Read the existing steering files in `.kiro/steering/incident-response-playbook-reference/` to understand the target format:
+Read the existing steering files in `.kiro/steering/kiro-steering/` to understand the target format:
 
-- #[[file:.kiro/steering/incident-response-playbook-reference/steering-irp-credential-compromise.md]]
-- #[[file:.kiro/steering/incident-response-playbook-reference/steering-irp-data-access.md]]
+- #[[file:.kiro/steering/kiro-steering/steering-irp-credential-compromise.md]]
+- #[[file:.kiro/steering/kiro-steering/steering-irp-data-access.md]]
 
 Use these as structural templates. The new steering file MUST follow the same patterns.
 
@@ -48,7 +50,7 @@ Examples:
 - `steering-irp-dos-ddos.md`
 - `steering-irp-ransomware.md`
 
-Store the file in: `.kiro/steering/incident-response-playbook-reference/`
+Store the file in: `.kiro/steering/kiro-steering/` and mirror to `ai-playbooks/steering/reference/`
 
 ### 3.2 Front-Matter (REQUIRED)
 
@@ -67,7 +69,7 @@ Rules:
 
 ### 3.3 Required Document Structure
 
-The new steering file MUST follow this exact 5-part structure aligned with NIST 800-61 R2:
+The new steering file MUST follow this exact 5-part structure aligned with NIST 800-61 R3:
 
 ```
 # Playbook: <Incident Type Title>
@@ -145,6 +147,8 @@ When translating from the human-centric playbook to the agent-centric steering f
 - Specific API call names to look for in CloudTrail (relevant to the incident type)
 - Warning callouts (⚠️) for actions that affect production workloads
 - Goal statements at the start of Parts 2, 3, and 4
+- Loop-back instructions at the end of Parts 3 and 4: if new evidence or a different attack vector is discovered, direct the agent to return to Part 1 and reassess scope
+- In Part 5 "Update Defenses", include: "Propose updates to this playbook and related steering files based on lessons learned — present changes to the operator for review and approval before modifying any steering files"
 
 **PRESERVE the following from source playbooks:**
 - The logical flow and ordering of incident response phases
@@ -184,10 +188,12 @@ Before writing the file, verify:
 - [ ] CLI commands use placeholder parameters, not hardcoded values
 - [ ] Warning callouts exist for destructive or production-impacting actions
 - [ ] Verification steps exist after containment and recovery
+- [ ] Loop-back instructions present at end of Parts 3 and 4 (return to Part 1 if new evidence emerges)
+- [ ] Part 5 "Update Defenses" includes human-approval language for steering file modifications
 - [ ] References section includes relevant AWS documentation links
 - [ ] No legal boilerplate or template meta-commentary remains from the source playbook
 - [ ] File is named `steering-irp-<short-name>.md`
-- [ ] File is saved in `.kiro/steering/incident-response-playbook-reference/`
+- [ ] File is saved in `.kiro/steering/kiro-steering/` and mirrored to `ai-playbooks/steering/reference/`
 
 ## Step 4: Register the New Steering File in the Routing System
 
@@ -195,7 +201,7 @@ After creating the steering file, you MUST update the following files to wire it
 
 ### 4.1 Update the Core Playbook
 
-Edit `.kiro/steering/incident-response-playbook-core.md`:
+Edit `.kiro/steering/kiro-steering/steering-irp-core.md` (and its mirror at `ai-playbooks/steering/steering-irp-core.md`):
 
 1. In the front-matter `description`, add a new bullet for the new steering file:
    ```
@@ -208,7 +214,7 @@ Edit `.kiro/steering/incident-response-playbook-core.md`:
 
 ### 4.2 Update Sibling Steering File Descriptions
 
-Edit each existing steering file in `.kiro/steering/incident-response-playbook-reference/` and add the new playbook's invoke line to their `description` front-matter, so all sibling playbooks cross-reference each other.
+Edit each existing steering file in `.kiro/steering/kiro-steering/` (and their mirrors in `ai-playbooks/steering/reference/`) and add the new playbook's invoke line to their `description` front-matter, so all sibling IR playbooks cross-reference each other.
 
 For example, add to each sibling's front-matter description:
 
@@ -227,7 +233,7 @@ User prompt: "Create a new IR steering file based on the DoS playbook in playboo
 Agent actions:
 1. Read `playbooks/IRP-DoS.md`
 2. Read existing steering files for format reference (as linked above)
-3. Create `.kiro/steering/incident-response-playbook-reference/steering-irp-dos-ddos.md` following all rules in Step 3
-4. Update `.kiro/steering/incident-response-playbook-core.md` front-matter and keyword routing (Step 4.1)
-5. Update description front-matter in `steering-irp-credential-compromise.md` and `steering-irp-data-access.md` (Step 4.2)
+3. Create `.kiro/steering/kiro-steering/steering-irp-dos-ddos.md` following all rules in Step 3, and mirror to `ai-playbooks/steering/reference/steering-irp-dos-ddos.md`
+4. Update `.kiro/steering/kiro-steering/steering-irp-core.md` and `ai-playbooks/steering/steering-irp-core.md` front-matter and keyword routing (Step 4.1)
+5. Update description front-matter in `steering-irp-credential-compromise.md` and `steering-irp-data-access.md` in both `.kiro/steering/kiro-steering/` and `ai-playbooks/steering/reference/` (Step 4.2)
 6. Present the created file to the user for review
