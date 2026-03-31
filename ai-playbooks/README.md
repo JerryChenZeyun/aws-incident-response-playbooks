@@ -1,9 +1,11 @@
 # AI-Powered Incident Response Automation
-This README relates specifically to this directory subsection of the aws-incident-response-playbook repository. The markdown files in this directory are to be used to create - and then use - a set of AI agent guidance files that will assist you to respond to security incidents.
+This README relates specifically to this directory subsection of the aws-incident-response-playbook repository. The markdown files in this directory are to be used to create - and then use - a set of guidance files that can be used with your AI-powered IDE of choice and will assist you to respond to security incidents.
 
 These markdown documents are created to be used as templates only. They should be customized by administrators working with AWS to suit their particular needs, risks, available tools and work processes. These files are not official AWS documentation and are provided as-is to customers using AWS products and who are looking to improve their incident response capability, by powering it with artificial intelligence ("AI").
 
 These markdown documents are written to facilitate editing and consumption into a variety of integrated development environments ("IDE"s) as guidance files. [In Kiro, these are known as "steering files"](https://kiro.dev/docs/steering/) and [in Claude Code, they are known as "skills"](https://code.claude.com/docs/en/skills). In both examples, the files are written in markdown for consumption into the relevant IDE.
+
+Note that you need to copy the files in this repo into the correct directory in your IDE. In Kiro, we recommend setting up a new project, and defining a [workspace](https://kiro.dev/docs/steering/) and keeping your steering files in the steering directory *for the workspace*.
 
 The markdown documents included cover several common scenarios faced by AWS customers. They outline steps based on the [NIST Computer Security Incident Handling Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf) (Special Publication 800-61 Revision 2) and codify these steps as structured guidance that AI agents can use to assist a human operator investigate and resolve an incident. This includes the following steps outlined by NIST:
 
