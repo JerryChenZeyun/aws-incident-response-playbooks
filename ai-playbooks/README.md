@@ -5,7 +5,9 @@ These markdown documents are created to be used as templates only. They should b
 
 These markdown documents are written to facilitate editing and consumption into a variety of integrated development environments ("IDE"s) as guidance files. [In Kiro, these are known as "steering files"](https://kiro.dev/docs/steering/) and [in Claude Code, they are known as "skills"](https://code.claude.com/docs/en/skills). In both examples, the files are written in markdown for consumption into the relevant IDE.
 
-Note that you need to copy the files in this repo into the correct directory in your IDE. In Kiro, we recommend setting up a new project, and defining a [workspace](https://kiro.dev/docs/steering/) and keeping your steering files in the steering directory *for the workspace*.
+Note that you need to copy the files in this repo into the correct directory in your IDE. In Kiro, we recommend setting up a new project, and defining a [workspace](https://kiro.dev/docs/steering/) and keeping your steering files in the steering directory *for the workspace*. Steering files specific to the workspace will take priority over global steering files. This also means that you don't risk having steering files in the global workspace that you don't want there, and having kiro reference those files when you are in a workspace for a project completely unrelated to those steering files. Refer to the sections below to ensure you have copied the files to the correct location for your IDE. 
+
+For Kiro, users should do similar preparation to move steering files to .kiro/steering/ folder 
 
 The markdown documents included cover several common scenarios faced by AWS customers. They outline steps based on the [NIST Computer Security Incident Handling Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf) (Special Publication 800-61 Revision 2) and codify these steps as structured guidance that AI agents can use to assist a human operator investigate and resolve an incident. This includes the following steps outlined by NIST:
 
@@ -16,6 +18,10 @@ The markdown documents included cover several common scenarios faced by AWS cust
 
 ## Usage
 ### Kiro IDE
+1. Copy the `ai-playbooks/steering/steering-irp-core.md` into your workspace's `.kiro/steering` directory
+2. Copy the `ai-playbooks/steering/reference` directory and all files in it into the `.kiro/steering` directory
+
+`mkdir -p .kiro/steering && cp ai-playbooks/steering/steering-irp-core.md .kiro/steering/ && cp -r ai-playbooks/steering/reference .kiro/steering/`
 
 #### File types
 There are three categories of markdown files we have created for this AI-powered incident response solution:
@@ -69,7 +75,10 @@ flowchart TD
 The "Tool Selection Strategy" section in the core file is also a nice touch — it tells the AI to prefer MCP tools over CLI when available, without requiring us as authors to maintain two versions of every command.
 
 ### Claude Code
-####ToDo - add a section explaining how this works in Claude Code.
+1. copy `ai-playbooks/skills/CLAUDE.md` to the root directory of the project  
+2. copy all other skills file in `ai-playbooks/skills/` folder into the `.claude/skills/` folder
+
+`cp ai-playbooks/skills/CLAUDE.md . && mkdir -p .claude/skills && find ai-playbooks/skills -name '*.md' ! -name 'CLAUDE.md' -exec cp {} .claude/skills/ \;`
 
 ## Security
 
